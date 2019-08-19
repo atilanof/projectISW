@@ -1,12 +1,14 @@
 package icai.dtc.isw.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import icai.dtc.isw.message.Message;
 
 public class SocketServer extends Thread {
 	public static final int PORT_NUMBER = 8081;
@@ -25,17 +27,28 @@ public class SocketServer extends Thread {
 		try {
 			in = socket.getInputStream();
 			out = socket.getOutputStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String request;
-			while ((request = br.readLine()) != null) {
-				System.out.println("Message received:" + request);
-				request+=" by Atilano";
-				request += '\n';
-				out.write(request.getBytes());
-			}
+			
+			//first read the object that has been sent
+			ObjectInputStream objectInputStream = new ObjectInputStream(in);
+		    Message mensajeEnviado= (Message)objectInputStream.readObject();
+			
+		    //Lógica del controlador 
+		    System.out.println("\nHe leído: "+mensajeEnviado.getContext());
+		    
+			// create an object output stream from the output stream so we can send an object through it
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+			
+			//Create the objetct to send
+			Message message=new Message();
+			message.setContext("/prueba_leida");
+			objectOutputStream.writeObject(message);
+			
 
 		} catch (IOException ex) {
 			System.out.println("Unable to get streams from client");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			try {
 				in.close();
