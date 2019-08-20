@@ -10,13 +10,12 @@ public class Message implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String context;
-	private Map<String, Object> input;
-	private Map<String, Object> output;
+	private Map<String, Object> session;
+	
 	
 	public Message () {
 		setContext(new String());
-		input=new HashMap<String, Object>();
-		output=new HashMap<String, Object>();
+		session=new HashMap<String, Object>();	
 		
 	}
 
@@ -28,21 +27,11 @@ public class Message implements Serializable {
 		this.context = context;
 	}
 
-	public Map<String, Object> getInputs() {
-		return input;
+	public Map<String, Object> getSession() {
+		return session;
 	}
 
-	public void setInputs(Map<String, Object> input) {
-		this.input = input;
-	}
-
-	public Map<String, Object> getOutput() {
-		return output;
-	}
-
-	public void setOutput(Map<String, Object> output) {
-		this.output = output;
-	}
-	
-	
+	public void setSession(Map<String, Object> session) {
+		this.session = session;
+	}	
 }

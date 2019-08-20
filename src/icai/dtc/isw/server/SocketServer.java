@@ -30,18 +30,29 @@ public class SocketServer extends Thread {
 			
 			//first read the object that has been sent
 			ObjectInputStream objectInputStream = new ObjectInputStream(in);
-		    Message mensajeEnviado= (Message)objectInputStream.readObject();
+		    Message mensaje= (Message)objectInputStream.readObject();
 			
 		    //Lógica del controlador 
-		    System.out.println("\nHe leído: "+mensajeEnviado.getContext());
+		    System.out.println("\nHe leído: "+mensaje.getContext());
 		    
+		    
+		    //Prueba para esperar
+		    /*try {
+		    	System.out.println("Me duermo");
+				Thread.sleep(15000);
+				System.out.println("Me levanto");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
 			// create an object output stream from the output stream so we can send an object through it
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
 			
 			//Create the objetct to send
-			Message message=new Message();
-			message.setContext("/prueba_leida");
-			objectOutputStream.writeObject(message);
+			String cadena=((String)mensaje.getSession().get("Nombre"));
+			cadena+=" añado información";
+			mensaje.getSession().put("Nombre", cadena);
+			objectOutputStream.writeObject(mensaje);
 			
 
 		} catch (IOException ex) {
