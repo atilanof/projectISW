@@ -23,10 +23,11 @@ public class Client {
 		session.put("Nombre","Soy el nombre");
 		
 		Message mensajeEnvio=new Message();
+		Message mensajeVuelta=new Message();
 		mensajeEnvio.setContext("/getNombre");
 		mensajeEnvio.setSession(session);
-		cliente.sent(mensajeEnvio);
-		System.out.println("3.- En Main.- El valor devuelto es: "+((String)mensajeEnvio.getSession().get("Nombre")));
+		cliente.sent(mensajeEnvio,mensajeVuelta);
+		System.out.println("3.- En Main.- El valor devuelto es: "+((String)mensajeVuelta.getSession().get("Nombre")));
 	}
 	
 	public Client(String host, int port) {
@@ -35,7 +36,7 @@ public class Client {
 	}
 	
 
-	public void sent(Message message) {
+	public void sent(Message messageOut, Message messageIn) {
 		try {
 
 			System.out.println("Connecting to host " + host + " on port " + port + ".");
@@ -51,13 +52,13 @@ public class Client {
 				ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
 				
 				//Create the objetct to send
-				objectOutputStream.writeObject(message);
+				objectOutputStream.writeObject(messageOut);
 				
 				// create a DataInputStream so we can read data from it.
 		        ObjectInputStream objectInputStream = new ObjectInputStream(in);
-		        message= (Message)objectInputStream.readObject();
-		        System.out.println("\n1.- El valor devuelto es: "+message.getContext());
-		        String cadena=(String) message.getSession().get("Nombre");
+		        messageIn= (Message)objectInputStream.readObject();
+		        System.out.println("\n1.- El valor devuelto es: "+messageIn.getContext());
+		        String cadena=(String) messageIn.getSession().get("Nombre");
 		        System.out.println("\n2.- La cadena devuelta es: "+cadena);
 				
 			} catch (UnknownHostException e) {

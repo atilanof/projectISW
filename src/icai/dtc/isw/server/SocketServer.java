@@ -33,7 +33,9 @@ public class SocketServer extends Thread {
 		    Message mensaje= (Message)objectInputStream.readObject();
 			
 		    //Lógica del controlador 
-		    System.out.println("\nHe leído: "+mensaje.getContext());
+		    //System.out.println("\n1.- He leído: "+mensaje.getContext());
+		    //System.out.println("\n2.- He leído: "+(String)mensaje.getSession().get("Nombre"));
+		    
 		    
 		    
 		    //Prueba para esperar
@@ -48,10 +50,11 @@ public class SocketServer extends Thread {
 			// create an object output stream from the output stream so we can send an object through it
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
 			
-			//Create the objetct to send
+			//Create the object to send
 			String cadena=((String)mensaje.getSession().get("Nombre"));
 			cadena+=" añado información";
 			mensaje.getSession().put("Nombre", cadena);
+			//System.out.println("\n3.- He leído: "+(String)mensaje.getSession().get("Nombre"));
 			objectOutputStream.writeObject(mensaje);
 			
 
