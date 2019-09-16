@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>This is easy!</comment>
+	<entry key="ddbb.connection">jdbc:postgresql://192.168.1.135:5432/isw2019</entry>
+	<entry key="ddbb.user">cliente</entry>
+	<entry key="ddbb.password">cliente</entry>
+	<entry key="host">127.0.0.1</entry>	
+	<entry key="port">8081</entry>		
+</properties>

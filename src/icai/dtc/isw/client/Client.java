@@ -7,27 +7,53 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
+import icai.dtc.isw.configuration.PropertiesISW;
+import icai.dtc.isw.domain.Customer;
 import icai.dtc.isw.message.Message;
 
 public class Client {
 	private String host;
 	private int port;
+	final static Logger logger = Logger.getLogger(Client.class);
 
 	public static void main(String args[]) {
-		String host = "127.0.0.1";
-		int port = 8081;
+		//Configure connections
+		String host = PropertiesISW.getInstance().getProperty("host");
+		int port = Integer.parseInt(PropertiesISW.getInstance().getProperty("port"));
+		Logger.getRootLogger().info("Host: "+host+" port"+port);
+		//Create a cliente class
 		Client cliente=new Client(host, port);
+		
 		HashMap<String,Object> session=new HashMap<String, Object>();
-		session.put("Nombre","Soy el nombre");
+		//session.put("/getCustomer","");
 		
 		Message mensajeEnvio=new Message();
 		Message mensajeVuelta=new Message();
-		mensajeEnvio.setContext("/getNombre");
+		mensajeEnvio.setContext("/getCustomer");
 		mensajeEnvio.setSession(session);
 		cliente.sent(mensajeEnvio,mensajeVuelta);
-		System.out.println("3.- En Main.- El valor devuelto es: "+((String)mensajeVuelta.getSession().get("Nombre")));
+		
+		
+		switch (mensajeVuelta.getContext()) {
+			case "/getCustomerResponse":
+				ArrayList<Customer> customerList=(ArrayList<Customer>)(mensajeVuelta.getSession().get("Customer"));
+				 for (Customer customer : customerList) {			
+						System.out.println("He leído el id: "+customer.getId()+" con nombre: "+customer.getName());
+					} 
+				break;
+				
+			default:
+				Logger.getRootLogger().info("Option not found");
+				System.out.println("\nError a la vuelta");
+				break;
+		
+		}
+		//System.out.println("3.- En Main.- El valor devuelto es: "+((String)mensajeVuelta.getSession().get("Nombre")));
 	}
 	
 	public Client(String host, int port) {
@@ -56,10 +82,12 @@ public class Client {
 				
 				// create a DataInputStream so we can read data from it.
 		        ObjectInputStream objectInputStream = new ObjectInputStream(in);
-		        messageIn= (Message)objectInputStream.readObject();
-		        System.out.println("\n1.- El valor devuelto es: "+messageIn.getContext());
+		        Message msg=(Message)objectInputStream.readObject();
+		        messageIn.setContext(msg.getContext());
+		        messageIn.setSession(msg.getSession());
+		        /*System.out.println("\n1.- El valor devuelto es: "+messageIn.getContext());
 		        String cadena=(String) messageIn.getSession().get("Nombre");
-		        System.out.println("\n2.- La cadena devuelta es: "+cadena);
+		        System.out.println("\n2.- La cadena devuelta es: "+cadena);*/
 				
 			} catch (UnknownHostException e) {
 				System.err.println("Unknown host: " + host);

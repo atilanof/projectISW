@@ -7,7 +7,11 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import icai.dtc.isw.controler.CustomerControler;
+import icai.dtc.isw.domain.Customer;
 import icai.dtc.isw.message.Message;
 
 public class SocketServer extends Thread {
@@ -30,8 +34,28 @@ public class SocketServer extends Thread {
 			
 			//first read the object that has been sent
 			ObjectInputStream objectInputStream = new ObjectInputStream(in);
-		    Message mensaje= (Message)objectInputStream.readObject();
-			
+		    Message mensajeIn= (Message)objectInputStream.readObject();
+		    //Object to return informations 
+		    ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+		    Message mensajeOut=new Message();
+		    switch (mensajeIn.getContext()) {
+		    	case "/getCustomer":
+		    		CustomerControler customerControler=new CustomerControler();
+		    		ArrayList<Customer> lista=new ArrayList<Customer>();
+		    		customerControler.getCustomer(lista);
+		    		mensajeOut.setContext("/getCustomerResponse");
+		    		HashMap<String,Object> session=new HashMap<String, Object>();
+		    		session.put("Customer",lista);
+		    		mensajeOut.setSession(session);
+		    		objectOutputStream.writeObject(mensajeOut);		    		
+		    	break;
+		    	
+		    	
+		    	default:
+		    		System.out.println("\nParámetro no encontrado");
+		    		break;
+		    }
+		    
 		    //Lógica del controlador 
 		    //System.out.println("\n1.- He leído: "+mensaje.getContext());
 		    //System.out.println("\n2.- He leído: "+(String)mensaje.getSession().get("Nombre"));
@@ -48,15 +72,15 @@ public class SocketServer extends Thread {
 				e.printStackTrace();
 			}*/
 			// create an object output stream from the output stream so we can send an object through it
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+			/*ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
 			
 			//Create the object to send
 			String cadena=((String)mensaje.getSession().get("Nombre"));
 			cadena+=" añado información";
 			mensaje.getSession().put("Nombre", cadena);
 			//System.out.println("\n3.- He leído: "+(String)mensaje.getSession().get("Nombre"));
-			objectOutputStream.writeObject(mensaje);
-			
+			objectOutputStream.writeObject(mensaje);*
+			*/
 
 		} catch (IOException ex) {
 			System.out.println("Unable to get streams from client");
