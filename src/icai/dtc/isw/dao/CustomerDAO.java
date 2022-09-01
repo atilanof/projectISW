@@ -27,7 +27,7 @@ public class CustomerDAO {
         }
 	}
 	public static Customer getCliente(int id) {
-		/*Connection con=ConnectionDAO.getInstance().getConnection();
+		Connection con=ConnectionDAO.getInstance().getConnection();
 		Customer cu=null;
 		try (PreparedStatement pst = con.prepareStatement("SELECT * FROM usuarios WHERE id="+id);
 			 ResultSet rs = pst.executeQuery()) {
@@ -40,14 +40,14 @@ public class CustomerDAO {
 
 			System.out.println(ex.getMessage());
 		}
-		return cu;*/
-		return new Customer("1","Atilano");
+		return cu;
+		//return new Customer("1","Atilano");
 	}
 	
 	public static void main(String[] args) {
 		
 		
-		ArrayList<Customer> lista=new ArrayList<Customer>();
+		ArrayList<Customer> lista= new ArrayList<>();
 		CustomerDAO.getClientes(lista);
 		
 		
