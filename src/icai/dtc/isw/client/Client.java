@@ -20,33 +20,45 @@ public class Client {
 	private String host;
 	private int port;
 	final static Logger logger = Logger.getLogger(Client.class);
-
-	public static void main(String args[]) {
+	public Client(String host, int port) {
+		this.host=host;
+		this.port=port;
+	}
+	public Client() {
+		this.host = PropertiesISW.getInstance().getProperty("host");
+		this.port = Integer.parseInt(PropertiesISW.getInstance().getProperty("port"));
+	}
+	public HashMap<String, Object> sentMessage(String Context, HashMap<String, Object> session) {
 		//Configure connections
-		String host = PropertiesISW.getInstance().getProperty("host");
-		int port = Integer.parseInt(PropertiesISW.getInstance().getProperty("port"));
+		//String host = PropertiesISW.getInstance().getProperty("host");
+		//int port = Integer.parseInt(PropertiesISW.getInstance().getProperty("port"));
 		Logger.getRootLogger().info("Host: "+host+" port"+port);
+		System.out.println("Host: "+host+" port"+port);
 		//Create a cliente class
-		Client cliente=new Client(host, port);
+		//Client cliente=new Client(host, port);
 		
-		HashMap<String,Object> session=new HashMap<String, Object>();
+		//HashMap<String,Object> session=new HashMap<String, Object>();
 		//session.put("/getCustomer","");
 		
 		Message mensajeEnvio=new Message();
 		Message mensajeVuelta=new Message();
-		mensajeEnvio.setContext("/getCustomer");
+		mensajeEnvio.setContext(Context);///getCustomer"
 		mensajeEnvio.setSession(session);
-		cliente.sent(mensajeEnvio,mensajeVuelta);
+		this.sent(mensajeEnvio,mensajeVuelta);
 		
 		
 		switch (mensajeVuelta.getContext()) {
-			case "/getCustomerResponse":
+			case "/getCustomersResponse":
 				ArrayList<Customer> customerList=(ArrayList<Customer>)(mensajeVuelta.getSession().get("Customer"));
 				 for (Customer customer : customerList) {			
 						System.out.println("He leído el id: "+customer.getId()+" con nombre: "+customer.getName());
 					} 
 				break;
-				
+			case "/getCustomerResponse":
+				session=mensajeVuelta.getSession();
+				Customer customer =(Customer) (session.get("Customer"));
+				System.out.println("He leído el id: "+customer.getId()+" con nombre: "+customer.getName());
+				break;
 			default:
 				Logger.getRootLogger().info("Option not found");
 				System.out.println("\nError a la vuelta");
@@ -54,13 +66,10 @@ public class Client {
 		
 		}
 		//System.out.println("3.- En Main.- El valor devuelto es: "+((String)mensajeVuelta.getSession().get("Nombre")));
+		return session;
 	}
 	
-	public Client(String host, int port) {
-		this.host=host;
-		this.port=port;
-	}
-	
+
 
 	public void sent(Message messageOut, Message messageIn) {
 		try {

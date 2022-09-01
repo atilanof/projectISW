@@ -10,17 +10,20 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import icai.dtc.isw.configuration.PropertiesISW;
 import icai.dtc.isw.controler.CustomerControler;
 import icai.dtc.isw.domain.Customer;
 import icai.dtc.isw.message.Message;
 
 public class SocketServer extends Thread {
-	public static final int PORT_NUMBER = 8081;
+	public static int port = 8081; //Valor por defecto
 
 	protected Socket socket;
 
 	private SocketServer(Socket socket) {
 		this.socket = socket;
+		//Configure connections
+		this.port = Integer.parseInt(PropertiesISW.getInstance().getProperty("port"));
 		System.out.println("New client connected from " + socket.getInetAddress().getHostAddress());
 		start();
 	}
@@ -38,18 +41,29 @@ public class SocketServer extends Thread {
 		    //Object to return informations 
 		    ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
 		    Message mensajeOut=new Message();
+			HashMap<String,Object> session=mensajeIn.getSession();
+			CustomerControler customerControler;
 		    switch (mensajeIn.getContext()) {
-		    	case "/getCustomer":
-		    		CustomerControler customerControler=new CustomerControler();
+		    	case "/getCustomers":
+		    		customerControler=new CustomerControler();
 		    		ArrayList<Customer> lista=new ArrayList<Customer>();
-		    		customerControler.getCustomer(lista);
-		    		mensajeOut.setContext("/getCustomerResponse");
-		    		HashMap<String,Object> session=new HashMap<String, Object>();
-		    		session.put("Customer",lista);
+		    		customerControler.getCustomers(lista);
+		    		mensajeOut.setContext("/getCustomersResponse");
+		    		//HashMap<String,Object> session=new HashMap<String, Object>();
+		    		session.put("Customers",lista);
 		    		mensajeOut.setSession(session);
 		    		objectOutputStream.writeObject(mensajeOut);		    		
-		    	break;
-		    	
+		    		break;
+				case "/getCustomer":
+					int id= (int) session.get("id");
+					customerControler=new CustomerControler();
+					Customer cu=customerControler.getCustomer(id);
+					System.out.println("id:"+cu.getId());
+					mensajeOut.setContext("/getCustomerResponse");
+					session.put("Customer",cu);
+					mensajeOut.setSession(session);
+					objectOutputStream.writeObject(mensajeOut);
+					break;
 		    	
 		    	default:
 		    		System.out.println("\nParámetro no encontrado");
@@ -102,7 +116,7 @@ public class SocketServer extends Thread {
 		System.out.println("SocketServer Example");
 		ServerSocket server = null;
 		try {
-			server = new ServerSocket(PORT_NUMBER);
+			server = new ServerSocket(port);
 			while (true) {
 				/**
 				 * create a new {@link SocketServer} object for each connection

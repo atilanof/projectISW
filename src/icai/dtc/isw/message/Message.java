@@ -10,7 +10,7 @@ public class Message implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String context;
-	private Map<String, Object> session;
+	private HashMap<String, Object> session;
 	
 	
 	public Message () {
@@ -27,11 +27,11 @@ public class Message implements Serializable {
 		this.context = context;
 	}
 
-	public Map<String, Object> getSession() {
+	public HashMap<String, Object> getSession() {
 		return session;
 	}
 
-	public void setSession(Map<String, Object> session) {
+	public void setSession(HashMap<String, Object> session) {
 		this.session = session;
 	}	
 }

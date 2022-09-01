@@ -7,7 +7,8 @@ import icai.dtc.isw.domain.Customer;
 
 public class CustomerControler {
 
-	public void getCustomer(ArrayList<Customer> lista) {
+	public void getCustomers(ArrayList<Customer> lista) {
 		CustomerDAO.getClientes(lista);
-	}	
+	}
+	public Customer getCustomer(int id) {return(CustomerDAO.getCliente(id));}
 }
