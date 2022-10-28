@@ -17,7 +17,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>server.SocketServer</mainClass>
+                                    <mainClass>icai.dtc.isw.server.SocketServer</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
@@ -37,7 +37,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>ui.JVentana</mainClass>
+                                    <mainClass>icai.dtc.isw.ui.JVentana</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
